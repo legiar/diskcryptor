@@ -33,6 +33,7 @@
 #if (_MSC_VER >= 1300) && _M_IX86
 	extern long _ftol(double);
 	extern long _ftol2(double dblSource) { return _ftol(dblSource); }
+	extern long _ftol2_sse(double dblSource) { return _ftol2(dblSource); }
 #endif
 
 INT_PTR CALLBACK
@@ -513,7 +514,7 @@ void _is_breaking_action( )
 	{
 		if (k % 2 == 0)
 		{
-			zeroauto(s_vol, sizeof_w(s_vol));
+			memset(s_vol, 0, sizeof_w(s_vol)); // WTF?
 			count = 0;
 			resume = FALSE;
 		}

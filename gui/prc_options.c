@@ -50,7 +50,9 @@ _options_dlg_proc(
 	_ctl_init ctl_chk_extended[ ] =
 	{
 		{ STR_NULL, IDC_HARD_CRYPTO_SUPPORT,	CONF_HW_CRYPTO		},
-		{ STR_NULL, IDC_HIDE_FILES,				CONF_HIDE_DCSYS		}
+		{ STR_NULL, IDC_HIDE_FILES,				CONF_HIDE_DCSYS		},
+		{ STR_NULL, IDC_DISABLE_TRIM,			CONF_DISABLE_TRIM	},
+		{ STR_NULL, IDC_SSD_OPTIMIZATION,		CONF_ENABLE_SSD_OPT	}
 	};
 
 	_ctl_init static_head_general[ ] = 
@@ -91,7 +93,7 @@ _options_dlg_proc(
 				HWND_NULL
 				);
 
-			zeroauto(d_tab, sizeof(_tab_data));
+			memset(d_tab, 0, sizeof(_tab_data));
 
 			d_tab->active = wnd->dlg[0];
 			wnd_set_long(hwnd, GWL_USERDATA, d_tab);
@@ -263,7 +265,7 @@ _options_dlg_proc(
 							autorun_set(_flags & CONF_AUTO_START);
 						}
 						__config.conf_flags = _flags;
-						autocpy(&__config.hotkeys, &_hotkeys, sizeof(DWORD)*HOTKEYS);
+						memcpy(&__config.hotkeys, &_hotkeys, sizeof(DWORD)*HOTKEYS);
 
 						dc_save_conf(&__config);						
 

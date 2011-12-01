@@ -39,10 +39,12 @@ Name: modifypath; Description: "&Add application directory to system path"; Flag
 Source: "..\release\i386\*.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode
 Source: "..\release\i386\*.sys"; DestDir: "{app}"; Check: not Is64BitInstallMode
 Source: "..\release\i386\*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode
+Source: "..\release\i386\*.pdb"; DestDir: "{app}"; Check: not Is64BitInstallMode
 ; x64 files
 Source: "..\release\amd64\*.exe"; DestDir: "{app}"; Check: Is64BitInstallMode
 Source: "..\release\amd64\*.sys"; DestDir: "{app}"; Check: Is64BitInstallMode
 Source: "..\release\amd64\*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode
+Source: "..\release\amd64\*.pdb"; DestDir: "{app}"; Check: Is64BitInstallMode
 ; misc files
 Source: "..\license.txt"; DestDir: "{app}"
 Source: "..\changes.txt"; DestDir: "{app}"
@@ -66,9 +68,26 @@ var
  succs: boolean;
  value: dword;
  resl: integer;
+ vers: TWindowsVersion;
 begin
  Result := true;
  repair := false;
+ 
+ GetWindowsVersionEx(vers);
+ if (not vers.NTPlatform) or (vers.Major < 5) or ((vers.Major = 5) and (vers.Minor = 0)) then begin
+  SuppressibleMsgBox('DiskCryptor requires Windows XP SP2 or later.', mbCriticalError, MB_OK, MB_OK);
+  Result := false; Exit;
+ end;
+ 
+ if (vers.Major = 5) and (vers.Minor = 1) and (vers.ServicePackMajor < 2) then begin
+  SuppressibleMsgBox('When running on Windows XP, Service Pack 2 is required.', mbCriticalError, MB_OK, MB_OK);
+  Result := false; Exit;
+ end;
+ if (vers.Major = 5) and (vers.Minor = 2) and (vers.ServicePackMajor < 1) then begin
+  SuppressibleMsgBox('When running on Windows 2003, Service Pack 1 is required.', mbCriticalError, MB_OK, MB_OK);
+  Result := false; Exit;
+ end;
+ 
  succs := RegQueryDwordValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Services\dcrypt', 'DeleteFlag', value);
  if succs and (value <> 0) then begin
   if MsgBox('You must restart your computer before installing DiskCryptor.'#13#10+
