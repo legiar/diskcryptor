@@ -1,0 +1,7 @@
+*.ncb
+*.suo
+*.user
+*.aps
+boot/bin/*
+debug/*
+release/*
