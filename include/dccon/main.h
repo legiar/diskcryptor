@@ -4,6 +4,7 @@
 #include "dcapi\drv_ioctl.h"
 
 int dc_set_boot_interactive(int d_num, int small_boot);
+int dc_get_password(int confirm, dc_pass *pass);
 int is_param(wchar_t *name);
 
 #define on_off(a) ( (a) != 0 ? L"ON":L"OFF" )

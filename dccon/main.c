@@ -269,7 +269,6 @@ void dc_getpass_loop(dc_pass *pass)
 	pass->size = pos * 2;
 }
 
-static
 int dc_get_password(int confirm, dc_pass *pass)
 {
 	dc_pass *cfm_p;

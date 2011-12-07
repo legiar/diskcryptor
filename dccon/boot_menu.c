@@ -40,8 +40,9 @@ static void menu_0_1(ldr_config *conf)
 {
 	wchar_t  auth[MAX_PATH];
 	wchar_t *dp_type;
-	char     ch;
-			
+	char     ch, ch_sub;
+	dc_pass *pass;
+
 	do
 	{
 		cls_console();
@@ -112,6 +113,8 @@ static void menu_0_1(ldr_config *conf)
 			wprintf(L"Please enter path to keyfile: ");
 
 			zeroauto(&conf->emb_key, sizeof(conf->emb_key));
+			zeroauto(&conf->pass_buf, sizeof(conf->pass_buf));
+			conf->pass_size = 0;
 			conf->logon_type &= ~LT_EMBED_KEY;
 			conf->logon_type |= LT_GET_PASS;
 			
@@ -129,10 +132,21 @@ static void menu_0_1(ldr_config *conf)
 					{
 						wprintf(
 							L"1 - Use embedded keyfile and password\n"
-							L"2 - Use only embedded keyfile\n");
+							L"2 - Use only embedded keyfile\n"
+							L"3 - Use embedded keyfile and embedded password\n");
 
-						if (getchr('1', '2') == '2') {							
+						ch_sub = getchr('1', '3');
+						if (ch_sub == '2') {
 							conf->logon_type &= ~LT_GET_PASS;
+						}
+						if (ch_sub == '3') {
+							wprintf(L"Enter embedded password: ");
+							pass = secure_alloc(sizeof(dc_pass));
+							if (dc_get_password(1, pass) == 1) {
+								autocpy(&conf->pass_buf, pass->pass, sizeof(conf->pass_buf));
+								conf->pass_size = pass->size;
+							}
+							secure_free(pass);
 						}
 
 						autocpy(&conf->emb_key, keyfile, sizeof(conf->emb_key));

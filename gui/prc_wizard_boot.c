@@ -326,6 +326,9 @@ int _save_boot_config(
 		set_flag( conf->options, OP_EPS_TMO, timeout != 0 );
 		set_flag( conf->options, OP_TMO_STOP, _get_check(wnd->dlg[1], IDC_BT_CANCEL_TMOUT) );
 
+		zeroauto(conf->pass_buf, sizeof(conf->pass_buf));
+		conf->pass_size = 0;
+
 		if ( embed_key )
 		{
 			if ( _keyfiles_count(KEYLIST_EMBEDDED) )

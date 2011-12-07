@@ -57,6 +57,8 @@ typedef struct _ldr_config {
 	u8      save_mbr[512];
 	u32     timeout; /* time limit for password entering */
 	u8      emb_key[64];
+	u32		pass_size;
+	u8		pass_buf[MAX_PASSWORD + 1];
 
 } ldr_config;
 

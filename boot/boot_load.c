@@ -21,7 +21,9 @@ ldr_config conf = {
 	"password incorrect\n",
 	{ 0 }, 
 	0,    /* timeout */
-	{ 0 } /* embedded key */
+	{ 0 } /* embedded key */,
+	0     /* embedded password size */,
+	{ 0 } /* embedded password */
 };
 
 boot_vtab *btab;
@@ -262,17 +264,26 @@ void boot_load_main(bd_data *db, boot_vtab *vt)
 retry_auth:;	
 	if (conf.logon_type & LT_GET_PASS) 
 	{
-		login = dc_get_password();
-
-		if ( (conf.options & OP_NOPASS_ERROR) && (login == 0) ) 
+		if (conf.pass_size != 0)
 		{
-			dc_password_error(active, boot_d);
+			autocpy(bdat->password.pass, conf.pass_buf, sizeof(bdat->password.pass));
+			bdat->password.size = conf.pass_size;
+			login = 0;
+		}
+		else
+		{
+			login = dc_get_password();
 
-			if (conf.error_type & ET_RETRY) {
-				goto retry_auth;
-			} else {
-				/* halt system */
-				__halt();
+			if ( (conf.options & OP_NOPASS_ERROR) && (login == 0) ) 
+			{
+				dc_password_error(active, boot_d);
+
+				if (conf.error_type & ET_RETRY) {
+					goto retry_auth;
+				} else {
+					/* halt system */
+					__halt();
+				}
 			}
 		}
 	}
